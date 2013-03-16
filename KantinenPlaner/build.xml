@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     Version 8
+     Stand 29.01.2013                                                             
+     Allgemeines Buildskript für JAR Arhive
+     Kim Michael Jansen                                                       
+     ====================================================================== -->
+<project name="KantinenPlaner" default="build.all">
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<!--                                                                 -->
+	<!-- Timestamps                                                      -->
+	<!--                                                                 -->
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<tstamp>
+		<format property="tstamp.date" 		pattern="yyyy.MM.dd" />
+		<format property="tstamp.time" 		pattern="HH:mm:ss" />
+		<format property="tstamp.iso" 		pattern="yyyy.MM.dd_HH:mm:ss" />
+	</tstamp>
+	
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<!--                                                                 -->
+	<!-- Verzeichnisse                                                   -->
+	<!--                                                                 -->
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<!-- Gemeinsames Basisverzeichnis fuer alle Bibliotheken             -->
+	<property name="lib" 		location="${basedir}/lib" />
+
+	<!-- Source Verzeichnisse                                             -->
+	<property name="source" 			location="${basedir}/src" />
+	<property name="source.test" 		location="${basedir}/test" />
+	<property name="source.doc" 		location="${basedir}/doc" />
+	<property name="source.skripte" 	location="${basedir}/skripte" />
+
+	<!-- Basisverzeichnis Konfiguration -->
+	<property name="dir.conf" 			location="${basedir}/config" />
+
+	<!-- Verzeichnisse fuer Ausgaben                                     -->
+	<property name="dir.output" 				location="${basedir}/output" />
+	<property name="dir.output.testing" 		location="${dir.output}/testing" />
+	<property name="dir.output.testing.report" 	location="${dir.output.testing}/report" />
+	<property name="dir.output.testing.result" 	location="${dir.output.testing}/result" />
+	<property name="dir.output.dist" 			location="${dir.output}/build" />
+	<property name="dir.output.dist.conf" 		location="${dir.output.dist}/config" />
+	<property name="dir.output.dist.log" 		location="${dir.output.dist}/logging" />
+	<property name="dir.output.dist.planung" 	location="${dir.output.dist}/planungsergebnis" />
+	<property name="dir.output.dist.src" 		location="${dir.output.dist}/workspace" />
+	<property name="dir.output.dist.doc" 		location="${dir.output.dist}/dokumentation" />
+	<property name="dir.output.javadoc" 		location="${dir.output.dist.doc}/javadoc" />
+	
+	<!-- TMP-dir -->
+	<property name="dir.tmp"						location="${basedir}/tmp"/>
+
+	<!-- Ziel-Verzeichnisse fuer compilierte Klassen                     -->
+	<property name="dir.classes" 						location="bin" />
+		
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<!--                                                                 -->
+	<!-- Classpath                                                       -->
+	<!--                                                                 -->
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<property name="jararchiv.name" value="planer.jar"/>
+	<property name="jararchiv.mainclass" value="de.vawi.oopjava.kantinenplaner.oberflaeche.OberflaecheMain"/>
+	<property name="jararchiv.titel" value="KantinenPlaner"/>
+	<property name="javarchiv.copyright" value="2012-2013, Kim Michael Jansen, Julia Meyer, Matthias Rohe"/>
+		
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<!--                                                                 -->
+	<!-- Classpath                                                       -->
+	<!--                                                                 -->
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<path id="project.class.path">
+		<fileset dir="${lib}">
+			<include name="**/*.jar" />
+		</fileset>
+		<pathelement location="${dir.classes}" />
+		<pathelement location="${dir.conf}" />
+	</path>
+	
+	<!-- Class-Path dist -->
+	<path id="project.class.path.jars">
+		<fileset dir="${lib}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+	
+	<!-- Source-Path -->
+	<path id="project.source.path">
+		<pathelement location="${source}" />
+		<pathelement location="${source.test}" />
+	</path>
+	
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<!--                                                                 -->
+	<!-- Allgemeine Properties                                           -->
+	<!--                                                                 -->
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<property name="javacencoding" value="cp1252" />
+
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<!--                                                                 -->
+	<!-- D e k l a r a t i o n   d e r   T a r g e t s                   -->
+	<!--                                                                 -->
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<!--                                                                 -->
+	<!-- Verzeichnisse aufträumen                                        -->
+	<!--                                                                 -->
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<target name="clean.classes">
+		<delete dir="${dir.classes}" />
+		<mkdir dir="${dir.classes}" />
+	</target>
+	<!-- Dist-Dateien loeschen                                             -->
+	<target name="clean.dist">
+		<delete dir="${dir.output.dist}"/>
+		<mkdir dir="${dir.output.dist}"/>
+	</target>
+	<!-- Dokumentation loeschen                                            -->
+	<target name="clean.doku">
+		<delete dir="${dir.output.javadoc}"/>
+		<mkdir dir="${dir.output.javadoc}"/>
+	</target>
+	<!-- JUnit Report-Dateien loeschen                                     -->
+	<target name="clean.reporting">
+		<delete dir="${dir.output.testing.report}" />
+		<delete dir="${dir.output.testing.result}" />
+		<mkdir dir="${dir.output.testing.report}" />
+		<mkdir dir="${dir.output.testing.result}" />
+	</target>
+			
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<!--                                                                 -->
+	<!-- Applikation compilieren                                         -->
+	<!--                                                                 -->
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<target name="compile" depends="clean.classes">
+		<!-- Compile the java code from ${source} into ${dir.classes} -->
+		<javac destdir="${dir.classes}" debug="on" encoding="${javacencoding}">
+			<src path="${source}" />
+			<classpath refid="project.class.path" />
+		</javac>
+		<copy todir="${dir.classes}">
+			<fileset dir="${source}">
+				<include name="log4j2.xml" />
+			</fileset>
+		</copy>		
+	</target>
+	
+	<target name="compile.test" depends="compile">
+		<!-- Compile the java code from ${source.test} into ${dir.classes} -->
+		<javac destdir="${dir.classes}" debug="on" encoding="${javacencoding}">
+			<src path="${source.test}" />
+			<classpath refid="project.class.path" />
+		</javac>
+	</target>
+	
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<!--                                                                 -->
+	<!-- Applikation testen                                              -->
+	<!--                                                                 -->
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<target name="test.testing">
+		<!-- JUnit-Tests durchfuehren -->
+		<junit fork="yes" maxmemory="1024m" dir="." printsummary="on">
+			<!-- classpath fuer die Tests -->
+			<classpath refid="project.class.path" />
+			<!-- XML-Formatter, fuer JUnitReport -->
+			<formatter type="xml" />
+			<!-- Ausfuehren der Tests -->
+			<batchtest fork="yes" todir="${dir.output.testing.result}">
+				<fileset dir="${source.test}">
+					<!-- Spezifikation der Test-Klassen -->
+					<include name="**/*Test.java" />
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+	<target name="test.reporting">
+		<!-- Reporting der Testergebnisse -->
+		<junitreport todir="${dir.output.testing.report}">
+			<fileset dir="${dir.output.testing.result}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="noframes" todir="${dir.output.testing.report}/html" />
+		</junitreport>
+	</target>
+	
+	<target name="test" depends="clean.reporting, test.testing" />
+	<!-- Testreporting is broken with Eclipse and JDK 1.6.32 and JDK 1.7.*
+	<target name="test" depends="clean.reporting, test.testing, test.reporting" />-->
+
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<!--                                                                 -->
+	<!-- JAR-Paket bauen                                                 -->
+	<!--                                                                 -->
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<target name="dist" depends="compile.test">
+		<!-- Bereinigen und erstellen der Verzeichnisse, die in das ZIP kommen -->
+		<delete dir="${dir.tmp}" />
+		<mkdir dir="${dir.tmp}" />
+		<mkdir dir="${dir.output.dist.doc}" />
+		<mkdir dir="${dir.output.dist.src}" />
+		<mkdir dir="${dir.output.dist.log}" />
+		<mkdir dir="${dir.output.dist.conf}" />
+		<mkdir dir="${dir.output.dist.planung}" />
+		<!-- Hier werden die class, XML und Properties Datei für das JAR kopiert --> 
+		<copy todir="${dir.tmp}">
+			<fileset dir="${dir.classes}">
+				<include name="**/*.class"/>
+				<include name="log4j2.xml" />
+				<exclude name="**/*Test.class" />
+			</fileset>
+		</copy>
+		<!-- Hier werden die Ordner und Dateien für den Ordner "workspace" kopiert -->
+		<!-- Kopiert den gesamten Workspace mit Unterordnern außer die Dokumentation -->
+		<copydir src="${basedir}" dest="${dir.output.dist.src}" />
+		<!-- Löschen der unerwünschten Unterordner, da "exclude" bei copydir diese nicht ausschließt -->
+		<delete dir="${dir.output.dist.src}/doc" />
+		<delete dir="${dir.output.dist.src}/bin" />
+		<delete dir="${dir.output.dist.src}/tmp" />
+		<delete dir="${dir.output.dist.src}/output" />
+		<!-- Kopiert die planer.cfg -->
+		<copydir src="${dir.conf}" dest="${dir.output.dist.conf}" />
+		<!-- Kopieren der Dokumentationen (falls vorhanden) -->
+		<copy failonerror="no" file="${source.doc}/readme.txt" todir="${dir.output.dist.src}/doc" />
+		<copy failonerror="no" file="${source.doc}/readme.txt" todir="${dir.output.dist}" />
+		<copy failonerror="no" todir="${dir.output.dist.doc}">
+			<fileset dir="${source.doc}">
+				<include name="**/Klassendiagramm_v17.png"/>
+				<include name="**/OOPJava_TL3_Dokumentation.pdf" />
+			</fileset>
+		</copy>
+		<!-- Kopiert die Skripte zum Starten des Programms -->
+		<copydir src="${source.skripte}" dest="${dir.output.dist}" />
+		<!-- Entpackt die externen Bibliotheken, damit diese in das Jar einfließen können -->
+		<unjar dest="${dir.tmp}">
+			<path refid="project.class.path.jars" />
+			<patternset>
+				<exclude name="**/*.java" />
+			</patternset>
+		</unjar>
+		<jar destfile="${dir.output.dist}/${jararchiv.name}">
+			<fileset dir="${dir.tmp}">
+				<exclude name="**/readme.txt" />
+			</fileset>
+			<manifest>
+				<attribute name="Main-Class" value="${jararchiv.mainclass}" />
+				<attribute name="Built-By" value="${user.name}" />
+				<attribute name="Build-On" value="${tstamp.iso}" />
+				<attribute name="Implementation-Title" value="${jararchive.titel}" />
+				<attribute name="Copyright" value="${jararchive.copyright}" />
+			</manifest>
+		</jar>
+		<!-- Das ZIP, welches die gesamte Abgabe enthält -->
+		<zip destfile="${dir.output.dist}/oopjava_tl3.zip">
+			<fileset dir="${dir.output.dist}" >
+				<include name="**/*"/>
+			</fileset>
+		</zip>
+		<delete dir="${dir.tmp}" />
+	</target>
+	
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<!--                                                                 -->
+	<!-- Doku generieren                                                 -->
+	<!--                                                                 -->
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<target name="doku.java" depends="clean.doku">
+		<javadoc destdir="${dir.output.javadoc}" classpathref="project.class.path" protected="true" verbose="true">
+			<fileset dir="${source}">
+				<include name="**/*.java" />
+			</fileset>
+		</javadoc>
+	</target>
+
+	<target name="doku" depends="doku.java" />
+	
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<!--                                                                 -->
+	<!-- Alles komplett neu bauen und zusammensetzen                     -->
+	<!--                                                                 -->
+	<!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+	<target name="build.all" depends="clean.classes, clean.dist, doku, dist, test" />
+	
+</project>

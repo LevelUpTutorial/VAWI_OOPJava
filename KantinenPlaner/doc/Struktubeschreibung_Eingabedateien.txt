@@ -1,0 +1,18 @@
+Allgemein
+Die Dateien sind comma-separated-files (*.csv).
+Strings sind durch "" eingefasst. Zahlen werden in "" eingefasst, wenn diese ein Komma enthalten. 
+
+Hitliste
+[NR],"[NAME]"
+// Die Nummer gibt die Wertigkeit an, wobei kleinere Nummern "beliebter" bedeuten im Vergleich zu höheren Nummern
+// 0 <= beliebtestes Gericht < ~ < weniger beliebtes Gericht
+
+Preisliste
+1.Zeile: [Grosshandel | Bauer],"[Name]",["][ENTFERNUNG | KOSTENSATZ]["],,,
+n.Zeile: [MENGE DES GEBINDES],"[EINHEIT]","[NAME DER ZUTAT]",["[m | f]"],["][PREIS DES GEBINDES]["],[VORHANDENE GEBINDE]
+// [EINHEIT] kann auch leer sein
+
+Rezepte
+[NAME DES REZEPTS],["][MENGE]["],"[EINHEIT]","[NAMEN DER ZUTAT]" 
+//Mengen werden durch "[MENGE]" maskiert, wenn sie ein Komma ',' enthalten.
+//Im Gegensatz zur Hitliste ist der Name des Repezts nicht durch Hochkomma eingeschlossen!
